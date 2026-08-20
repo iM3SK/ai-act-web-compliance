@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI content disclosure patterns</title>
+    <link rel="stylesheet" href="ai-disclosure.css" />
+  </head>
+  <body>
+    <main>
+      <h1>AI content disclosure patterns</h1>
+      <p>
+        This is a technical example. Determine the duty and icon variant from
+        current law and the actual context before use.
+      </p>
+
+      <section class="demo-section" aria-labelledby="image-title">
+        <h2 id="image-title">Image or video</h2>
+        <figure class="ai-media">
+          <div
+            class="ai-media__surface"
+            role="img"
+            aria-label="Placeholder for a generated image or video"
+          >
+            Media
+          </div>
+          <figcaption class="ai-disclosure ai-disclosure--dark ai-media__label">
+            <img
+              class="ai-disclosure__icon"
+              src="../eu-icons/svg/ai-generated-white.svg"
+              alt=""
+            />
+            <span>Generated with AI</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="demo-section" aria-labelledby="modified-title">
+        <h2 id="modified-title">Partially modified content</h2>
+        <p class="ai-disclosure ai-inline-disclosure">
+          <img
+            class="ai-disclosure__icon"
+            src="../eu-icons/svg/ai-modified-black.svg"
+            alt=""
+          />
+          <span>Partially modified with AI: the face was changed</span>
+        </p>
+      </section>
+
+      <section class="demo-section" aria-labelledby="audio-title">
+        <h2 id="audio-title">Audio</h2>
+        <p class="ai-disclosure ai-inline-disclosure">
+          <img
+            class="ai-disclosure__icon"
+            src="../eu-icons/svg/ai-generated-black.svg"
+            alt=""
+          />
+          <span>The voice was generated with AI</span>
+        </p>
+        <p>
+          For an audio-only deepfake, include the disclaimer at the start of
+          the audio track. This visible text does not replace it.
+        </p>
+      </section>
+
+      <article class="demo-section" aria-labelledby="article-title">
+        <aside
+          class="ai-disclosure ai-inline-disclosure"
+          aria-label="Article provenance information"
+        >
+          <img
+            class="ai-disclosure__icon"
+            src="../eu-icons/svg/ai-generated-black.svg"
+            alt=""
+          />
+          <span>The text was generated with AI</span>
+        </aside>
+        <h2 id="article-title">Publicly shared text heading</h2>
+        <p>The article follows the disclosure shown at first exposure.</p>
+      </article>
+
+      <section class="demo-section" aria-labelledby="basic-title">
+        <h2 id="basic-title">Basic icon with an explanation</h2>
+        <p class="ai-disclosure ai-inline-disclosure">
+          <img
+            class="ai-disclosure__icon"
+            src="../eu-icons/svg/ai-basic-black.svg"
+            alt=""
+          />
+          <span>The background was generated with AI</span>
+        </p>
+        <details class="ai-disclosure-details">
+          <summary>Modification details</summary>
+          <p>
+            AI generated only the background. The person and foreground object
+            come from the original photograph.
+          </p>
+        </details>
+      </section>
+
+      <section class="demo-section" aria-labelledby="chat-title">
+        <h2 id="chat-title">Chatbot</h2>
+        <p class="ai-disclosure ai-inline-disclosure">
+          <span>You are interacting with an AI system.</span>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
