@@ -208,6 +208,8 @@ def check_workflow(errors: list[str]) -> None:
             fail(errors, f"GitHub Action is not pinned to a commit: {line.strip()}")
     if "permissions:\n  contents: read" not in workflow:
         fail(errors, "CI workflow must declare read-only contents permission")
+    if "cache-dependency-path: requirements-dev.txt" not in workflow:
+        fail(errors, "setup-python cache must track requirements-dev.txt")
 
 
 def check_readme_contract(errors: list[str]) -> None:
