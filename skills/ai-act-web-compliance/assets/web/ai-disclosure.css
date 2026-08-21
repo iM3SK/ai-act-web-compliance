@@ -80,7 +80,7 @@
 }
 
 .ai-disclosure-details summary:focus-visible {
-  outline: 3px solid #0b57d0;
+  outline: 3px solid currentColor;
   outline-offset: 0.25rem;
 }
 

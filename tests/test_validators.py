@@ -17,19 +17,33 @@ PREFLIGHT_VALIDATOR = SKILL / "scripts" / "verify-preflight-yaml.py"
 
 VALID_PREFLIGHT = """\
 checked_at: "2026-08-21T12:00:00+02:00"
-jurisdiction: "EU/EEA and named Member State"
+jurisdiction: "EU/EEA only"
 ai_act_consolidation: "CELEX 02024R1689-20260727"
-official_guidance: "Final Guidelines, 31 July 2026"
+official_guidance: "Final Guidelines, 31 July 2026; overview, 5 August 2026"
 code_and_icons: "Final Code and EU icons, 10 August 2026"
-national_sources: "Official authority and legislation register checked"
+national_sources: "not in scope for this EU-only example"
 changes_since_baseline: "none observed"
 unavailable_sources: "none"
 """
 
+TEMPLATE_PREFLIGHT = """\
+checked_at: YYYY-MM-DDTHH:MM:SS+TZ
+jurisdiction: EU/EEA and named Member State
+ai_act_consolidation: CELEX identifier and consolidation date
+official_guidance: titles, statuses, and update dates
+code_and_icons: title, status, and update date
+national_sources: exact authority and legislation-register sources, dates, and results
+changes_since_baseline: none observed | concise list
+unavailable_sources: none | concise list
+"""
 
-def run_preflight_validator(document: str) -> subprocess.CompletedProcess[str]:
+
+def run_preflight_validator(
+    document: str,
+    *arguments: str,
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [sys.executable, str(PREFLIGHT_VALIDATOR)],
+        [sys.executable, str(PREFLIGHT_VALIDATOR), *arguments],
         input=document,
         text=True,
         capture_output=True,
@@ -68,7 +82,7 @@ class PreflightValidatorTests(unittest.TestCase):
 
     def test_rejects_blank_value(self) -> None:
         document = VALID_PREFLIGHT.replace(
-            'national_sources: "Official authority and legislation register checked"',
+            'national_sources: "not in scope for this EU-only example"',
             'national_sources: ""',
         )
         self.assert_rejected(document, "values must be non-empty strings")
@@ -88,6 +102,34 @@ class PreflightValidatorTests(unittest.TestCase):
             VALID_PREFLIGHT + "---\nsecond: document\n",
             "invalid YAML",
         )
+
+    def test_rejects_malformed_timestamp(self) -> None:
+        document = VALID_PREFLIGHT.replace(
+            'checked_at: "2026-08-21T12:00:00+02:00"',
+            'checked_at: "21 August 2026 at noon"',
+        )
+        self.assert_rejected(document, "checked_at must use")
+
+    def test_rejects_impossible_timestamp(self) -> None:
+        document = VALID_PREFLIGHT.replace(
+            'checked_at: "2026-08-21T12:00:00+02:00"',
+            'checked_at: "2026-02-30T12:00:00+02:00"',
+        )
+        self.assert_rejected(document, "valid calendar date")
+
+    def test_rejects_timestamp_without_timezone(self) -> None:
+        document = VALID_PREFLIGHT.replace(
+            'checked_at: "2026-08-21T12:00:00+02:00"',
+            'checked_at: "2026-08-21T12:00:00"',
+        )
+        self.assert_rejected(document, "checked_at must use")
+
+    def test_rejects_unresolved_template_in_runtime_mode(self) -> None:
+        self.assert_rejected(TEMPLATE_PREFLIGHT, "unresolved template values")
+
+    def test_accepts_documented_template_in_template_mode(self) -> None:
+        result = run_preflight_validator(TEMPLATE_PREFLIGHT, "--template")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 Mutator = Callable[[Path], None]
@@ -197,6 +239,41 @@ class RepositoryValidatorMutationTests(unittest.TestCase):
             workflow.write_bytes(text.encode("utf-8"))
 
         self.assert_mutation_rejected(mutate, "security-events write permission")
+
+    def test_rejects_web_asset_escape(self) -> None:
+        def mutate(checkout: Path) -> None:
+            example = (
+                checkout
+                / "skills"
+                / "ai-act-web-compliance"
+                / "assets"
+                / "web"
+                / "examples.html"
+            )
+            text = example.read_text(encoding="utf-8")
+            text = text.replace(
+                "</body>",
+                '<img src="../../../../README.md" alt="">\n  </body>',
+            )
+            example.write_bytes(text.encode("utf-8"))
+
+        self.assert_mutation_rejected(mutate, "web example asset escapes skill root")
+
+    def test_rejects_duplicate_icon_checksum_path(self) -> None:
+        def mutate(checkout: Path) -> None:
+            manifest = (
+                checkout
+                / "skills"
+                / "ai-act-web-compliance"
+                / "assets"
+                / "eu-icons"
+                / "SHA256SUMS.txt"
+            )
+            lines = manifest.read_text(encoding="utf-8").splitlines()
+            lines[1] = lines[0]
+            manifest.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
+
+        self.assert_mutation_rejected(mutate, "duplicate icon checksum path")
 
 
 if __name__ == "__main__":

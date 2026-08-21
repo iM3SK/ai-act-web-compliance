@@ -37,10 +37,12 @@ The target repository policy is:
 - successful `Validate (ubuntu-24.04)`, `Validate (windows-2025)`, and `CodeQL`
   checks before merge;
 - read-only default GitHub Actions permissions, narrowly scoped CodeQL upload
-  permission, pinned action commits, and non-persisted checkout credentials;
+  permission, pinned action commits, non-persisted checkout credentials, and a
+  repository policy requiring third-party actions to use full commit SHAs;
 - weekly grouped Dependabot updates for Python and GitHub Actions;
-- dependency alerts, private vulnerability reporting, secret scanning, and
-  push protection enabled when the repository plan supports them.
+- dependency and malware alerts, private vulnerability reporting, secret
+  scanning, and push protection enabled when the repository plan supports them;
+- immutable releases and automatic deletion of merged head branches.
 
 The tracked workflow and Dependabot configuration enforce the file-based
 parts. Maintainers must verify the repository-level controls in GitHub after a

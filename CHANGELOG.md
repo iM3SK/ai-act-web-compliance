@@ -9,8 +9,12 @@ Versioning for its public skill contract.
   baselines belong in local extensions.
 - Added exact final Guidelines and Code document identifiers and hashes.
 - Added the Article 50 temporal-scope and guidance-based output-scope checks.
-- Added repository-wide LF and generated-artifact validation plus 16 positive
-  and mutation regression tests on both supported CI operating systems.
+- Added repository-wide LF and generated-artifact validation on both supported
+  CI operating systems.
+- Expanded the suite to 23 tests with runtime timestamp validation, explicit
+  template mode, icon-manifest bijection, and web-asset containment checks.
+- Tracked the Article 50 overview update independently from the final
+  Guidelines library page and made local test commands bytecode-free.
 - Hardened checkout credentials and Actions permissions, added CodeQL, grouped
   Dependabot updates, CODEOWNERS, and documented repository safeguards.
 

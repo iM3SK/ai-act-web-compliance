@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
+from datetime import datetime
+import re
 import sys
 
 try:
@@ -21,6 +24,22 @@ EXPECTED_KEYS = {
     "national_sources",
     "changes_since_baseline",
     "unavailable_sources",
+}
+
+CHECKED_AT_PATTERN = re.compile(
+    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})"
+)
+TEMPLATE_VALUES = {
+    "checked_at": "YYYY-MM-DDTHH:MM:SS+TZ",
+    "jurisdiction": "EU/EEA and named Member State",
+    "ai_act_consolidation": "CELEX identifier and consolidation date",
+    "official_guidance": "titles, statuses, and update dates",
+    "code_and_icons": "title, status, and update date",
+    "national_sources": (
+        "exact authority and legislation-register sources, dates, and results"
+    ),
+    "changes_since_baseline": "none observed | concise list",
+    "unavailable_sources": "none | concise list",
 }
 
 
@@ -57,6 +76,14 @@ def fail(message: str) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--template",
+        action="store_true",
+        help="allow the documented placeholder values while validating the template",
+    )
+    arguments = parser.parse_args()
+
     raw_yaml = sys.stdin.read()
     try:
         document = yaml.load(raw_yaml, Loader=UniqueKeyLoader)
@@ -81,6 +108,30 @@ def main() -> None:
     )
     if invalid_values:
         fail("values must be non-empty strings: " + ", ".join(invalid_values))
+
+    if not arguments.template:
+        unresolved = sorted(
+            key
+            for key, value in document.items()
+            if TEMPLATE_VALUES.get(key) == value
+        )
+        if unresolved:
+            fail("unresolved template values: " + ", ".join(unresolved))
+
+    checked_at = document["checked_at"]
+    if arguments.template and checked_at == TEMPLATE_VALUES["checked_at"]:
+        return
+    if CHECKED_AT_PATTERN.fullmatch(checked_at) is None:
+        fail("checked_at must use YYYY-MM-DDTHH:MM:SS with Z or a numeric offset")
+    normalised = (
+        checked_at[:-1] + "+00:00" if checked_at.endswith("Z") else checked_at
+    )
+    try:
+        parsed = datetime.fromisoformat(normalised)
+    except ValueError:
+        fail("checked_at must contain a valid calendar date and time")
+    if parsed.utcoffset() is None:
+        fail("checked_at must include a timezone offset")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 $skillRoot = Split-Path -Parent $PSScriptRoot
 $checksumFile = Join-Path $skillRoot 'assets\eu-icons\SHA256SUMS.txt'
+$iconRoot = Join-Path $skillRoot 'assets\eu-icons'
 $requiredFiles = @(
     'SKILL.md',
     'agents\openai.yaml',
@@ -57,6 +58,9 @@ foreach ($textFile in $authoredTextFiles) {
     }
 }
 
+$manifestIconPaths = [System.Collections.Generic.HashSet[string]]::new(
+    [System.StringComparer]::OrdinalIgnoreCase
+)
 if (-not (Test-Path -LiteralPath $checksumFile -PathType Leaf)) {
     $errors.Add('Missing icon checksum manifest.')
 }
@@ -74,8 +78,43 @@ else {
             continue
         }
 
-        $relativeIconPath = $Matches.path.Replace('/', '\')
-        $iconPath = Join-Path $skillRoot "assets\eu-icons\$relativeIconPath"
+        $relativeIconPath = $Matches.path.Replace(
+            '/',
+            [System.IO.Path]::DirectorySeparatorChar
+        )
+        if ([System.IO.Path]::IsPathRooted($relativeIconPath)) {
+            $errors.Add("Icon checksum path must be relative: $relativeIconPath")
+            continue
+        }
+        if ($relativeIconPath.Split([char[]]'\/') -contains '..') {
+            $errors.Add("Icon checksum path escapes asset root: $relativeIconPath")
+            continue
+        }
+
+        $iconPath = [System.IO.Path]::GetFullPath(
+            (Join-Path $iconRoot $relativeIconPath)
+        )
+        $relativeToIconRoot = [System.IO.Path]::GetRelativePath(
+            $iconRoot,
+            $iconPath
+        )
+        $firstIconSegment = $relativeToIconRoot.Split([char[]]'\/')[0]
+        if (
+            [System.IO.Path]::IsPathRooted($relativeToIconRoot) -or
+            $firstIconSegment -eq '..'
+        ) {
+            $errors.Add("Icon checksum path escapes asset root: $relativeIconPath")
+            continue
+        }
+
+        $manifestPath = $relativeToIconRoot.Replace(
+            [System.IO.Path]::DirectorySeparatorChar,
+            '/'
+        )
+        if (-not $manifestIconPaths.Add($manifestPath)) {
+            $errors.Add("Duplicate icon checksum path: $manifestPath")
+            continue
+        }
         if (-not (Test-Path -LiteralPath $iconPath -PathType Leaf)) {
             $errors.Add("Missing icon: $relativeIconPath")
             continue
@@ -89,10 +128,29 @@ else {
     }
 }
 
-$iconFiles = Get-ChildItem -LiteralPath (Join-Path $skillRoot 'assets\eu-icons') `
+$iconFiles = Get-ChildItem -LiteralPath $iconRoot `
     -Recurse -File | Where-Object { $_.Extension -in '.svg', '.png' }
 if ($iconFiles.Count -ne 24) {
     $errors.Add("Expected 24 icon files, found $($iconFiles.Count).")
+}
+
+$actualIconPaths = [System.Collections.Generic.HashSet[string]]::new(
+    [System.StringComparer]::OrdinalIgnoreCase
+)
+foreach ($iconFile in $iconFiles) {
+    $relativeIcon = [System.IO.Path]::GetRelativePath(
+        $iconRoot,
+        $iconFile.FullName
+    ).Replace([System.IO.Path]::DirectorySeparatorChar, '/')
+    $null = $actualIconPaths.Add($relativeIcon)
+    if (-not $manifestIconPaths.Contains($relativeIcon)) {
+        $errors.Add("Missing icon checksum entry: $relativeIcon")
+    }
+}
+foreach ($manifestIconPath in $manifestIconPaths) {
+    if (-not $actualIconPaths.Contains($manifestIconPath)) {
+        $errors.Add("Checksum entry has no bundled icon: $manifestIconPath")
+    }
 }
 
 $skillText = Get-Content -Raw -LiteralPath (Join-Path $skillRoot 'SKILL.md')
@@ -111,9 +169,9 @@ $requiredSkillText = @(
     'parse the final fenced block as YAML',
     'with no stray delimiter',
     'Never headline or summarize an assessment as `PASS`, `compliant`',
-    'State the narrower Article 50 classification'
-    'perform an adversarial self-check'
-    'Test one expected path and one forbidden or failure path'
+    'State the narrower Article 50 classification',
+    'perform an adversarial self-check',
+    'Test one expected path and one forbidden or failure path',
     'A string-presence assertion'
 )
 foreach ($requiredText in $requiredSkillText) {
@@ -189,6 +247,8 @@ $contentContracts = @(
         Path = 'references\official-sources.md'
         Required = @(
             'Baseline observed on 21 August 2026',
+            'Article 50 overview',
+            '5 August 2026',
             'Official document ID',
             '`131215`',
             '`129555`',
@@ -232,7 +292,7 @@ if (Test-Path -LiteralPath $preflightPath -PathType Leaf) {
         }
         elseif (Test-Path -LiteralPath $yamlValidator -PathType Leaf) {
             $yamlValidationOutput = $yamlBlocks[0].Groups['body'].Value |
-                & $pythonCommand.Source $yamlValidator 2>&1
+                & $pythonCommand.Source $yamlValidator --template 2>&1
             if ($LASTEXITCODE -ne 0) {
                 $errors.Add(
                     'Preflight YAML schema validation failed: ' +
@@ -260,6 +320,18 @@ if (Test-Path -LiteralPath $examplePath -PathType Leaf) {
         $resolvedAsset = [System.IO.Path]::GetFullPath(
             (Join-Path (Split-Path -Parent $examplePath) $normalisedReference)
         )
+        $relativeToSkill = [System.IO.Path]::GetRelativePath(
+            $skillRoot,
+            $resolvedAsset
+        )
+        $firstAssetSegment = $relativeToSkill.Split([char[]]'\/')[0]
+        if (
+            [System.IO.Path]::IsPathRooted($relativeToSkill) -or
+            $firstAssetSegment -eq '..'
+        ) {
+            $errors.Add("Local example asset escapes skill root: $assetReference")
+            continue
+        }
         if (-not (Test-Path -LiteralPath $resolvedAsset -PathType Leaf)) {
             $errors.Add("Broken local example asset: $assetReference")
         }

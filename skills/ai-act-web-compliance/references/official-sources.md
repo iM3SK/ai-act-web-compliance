@@ -52,6 +52,7 @@ URL is still current.
 | AI Act consolidation   | CELEX `02024R1689-20260727`, including Regulation (EU) 2026/1744                                                                     |
 | Article 50 application | 2 August 2026; Article 111(4) gives qualifying systems placed on the market before that date until 2 December 2026 for Article 50(2) |
 | Final Guidelines       | Published 20 July 2026; page last updated 31 July 2026                                                                               |
+| Article 50 overview    | Last updated 5 August 2026; tracked separately from the final Guidelines library page                                                 |
 | Commission FAQ         | Last updated 24 July 2026                                                                                                            |
 | Code page              | Last updated 31 July 2026; Code assessed as an adequate voluntary tool, not conclusive proof of compliance                           |
 | EU icons page          | Last updated 10 August 2026; three semantic icons, four visual variants, optional use, free without attribution                      |

@@ -12,7 +12,8 @@ generation workflow, or implementation.
    2024/1689. Check Article 3(60), Article 50, Articles 74 to 85, Article 99,
    Article 111, and Article 113 as relevant. Open every amending act listed by
    the consolidation.
-3. Open the Commission's final Article 50 Guidelines page and download or open
+3. Open both the Commission's final Article 50 Guidelines library page and its
+   Article 50 overview, record both visible update dates, and download or open
    the current final Guidelines. Do not use the consultation draft.
 4. Open the Commission Article 50 FAQ, Code of Practice page, current Code, and
    EU icons page. Record their visible update dates and whether the Code has
@@ -39,7 +40,8 @@ material until reviewed:
 
 - consolidation date, CELEX identifier, or listed amending act;
 - text or application date of the relevant AI Act provisions;
-- publication/update date or status of final Guidelines, FAQ, or Code;
+- publication/update date or status of the final Guidelines library page,
+  Article 50 overview, FAQ, or Code;
 - icon archive link, licence, semantic variants, or placement rules;
 - Member State implementing-law process identifier, successor chain, stage, or
   designated authority;
@@ -62,7 +64,7 @@ block as YAML before returning and reject malformed or duplicate fields.
 checked_at: YYYY-MM-DDTHH:MM:SS+TZ
 jurisdiction: EU/EEA and named Member State
 ai_act_consolidation: CELEX identifier and consolidation date
-official_guidance: title, status, and update date
+official_guidance: titles, statuses, and update dates
 code_and_icons: title, status, and update date
 national_sources: exact authority and legislation-register sources, dates, and results
 changes_since_baseline: none observed | concise list

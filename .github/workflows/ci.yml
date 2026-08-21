@@ -49,7 +49,7 @@ jobs:
         run: python tests/validate_repository.py
 
       - name: Run validator mutation tests
-        run: python -m unittest discover -s tests -p "test_*.py" -v
+        run: python -B -m unittest discover -s tests -p "test_*.py" -v
 
       - name: Validate skill package
         shell: pwsh

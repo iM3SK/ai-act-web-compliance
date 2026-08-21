@@ -35,7 +35,11 @@ REQUIRED_PATHS = {
     ROOT / ".github" / "CODEOWNERS",
     SKILL_ROOT / "SKILL.md",
     SKILL_ROOT / "agents" / "openai.yaml",
+    SKILL_ROOT / "assets" / "eu-icons" / "SHA256SUMS.txt",
+    SKILL_ROOT / "assets" / "web" / "ai-disclosure.css",
+    SKILL_ROOT / "assets" / "web" / "examples.html",
     SKILL_ROOT / "scripts" / "verify-pack.ps1",
+    SKILL_ROOT / "scripts" / "verify-preflight-yaml.py",
 }
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PINNED_ACTION = re.compile(r"^\s*uses:\s*[^\s@]+@[0-9a-f]{40}(?:\s*#.*)?$", re.MULTILINE)
@@ -186,6 +190,8 @@ def check_skill_metadata(errors: list[str]) -> None:
 
 def check_web_example(errors: list[str]) -> None:
     example = SKILL_ROOT / "assets" / "web" / "examples.html"
+    if not example.is_file():
+        return
     parser = AssetParser()
     parser.feed(example.read_text(encoding="utf-8"))
     if parser.language != "en":
@@ -194,6 +200,11 @@ def check_web_example(errors: list[str]) -> None:
         if target.startswith(("#", "data:", "http://", "https://", "mailto:")):
             continue
         resolved = (example.parent / target).resolve()
+        try:
+            resolved.relative_to(SKILL_ROOT.resolve())
+        except ValueError:
+            fail(errors, f"web example asset escapes skill root: {target}")
+            continue
         if not resolved.is_file():
             fail(errors, f"broken web example asset: {target}")
 
@@ -207,23 +218,40 @@ def check_icon_integrity(errors: list[str]) -> None:
         fail(errors, f"expected 24 EU icon files, found {len(icons)}")
 
     manifest = icon_root / "SHA256SUMS.txt"
+    if not manifest.is_file():
+        return
     entries = [line for line in manifest.read_text(encoding="utf-8").splitlines() if line]
     if len(entries) != 24:
         fail(errors, f"expected 24 icon checksums, found {len(entries)}")
         return
+    manifest_paths: set[str] = set()
+    actual_paths = {path.relative_to(icon_root).as_posix() for path in icons}
     for line in entries:
         match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
         if match is None:
             fail(errors, f"invalid icon checksum line: {line}")
             continue
         expected, relative = match.groups()
-        path = icon_root / Path(relative)
+        relative_path = Path(relative)
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            fail(errors, f"icon checksum path escapes asset root: {relative}")
+            continue
+        normalised = relative_path.as_posix()
+        if normalised in manifest_paths:
+            fail(errors, f"duplicate icon checksum path: {normalised}")
+            continue
+        manifest_paths.add(normalised)
+        path = icon_root / relative_path
         if not path.is_file():
             fail(errors, f"missing icon from checksum manifest: {relative}")
             continue
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
         if actual != expected:
             fail(errors, f"icon checksum mismatch: {relative}")
+    for relative in sorted(actual_paths - manifest_paths):
+        fail(errors, f"missing icon checksum entry: {relative}")
+    for relative in sorted(manifest_paths - actual_paths):
+        fail(errors, f"checksum entry has no bundled icon: {relative}")
 
 
 def check_workflow(errors: list[str]) -> None:
@@ -255,6 +283,8 @@ def check_workflow(errors: list[str]) -> None:
         fail(errors, "CI dependency installation must be non-interactive")
     if "python -m pip install --no-deps -r requirements-dev.txt" not in workflow:
         fail(errors, "CI must install the pinned validation dependency without dependencies")
+    if 'python -B -m unittest discover -s tests -p "test_*.py" -v' not in workflow:
+        fail(errors, "CI mutation tests must disable repository bytecode generation")
     if workflow.count("github/codeql-action/") != 2:
         fail(errors, "CI must initialise and analyse Python with CodeQL")
     if "security-events: write" not in workflow:
@@ -296,6 +326,8 @@ def check_readme_contract(errors: list[str]) -> None:
         fail(errors, "README.md must use Clickable map as its first H2")
     if "not legal advice" not in readme.lower():
         fail(errors, "README.md must state the legal-advice boundary")
+    if 'python -B -m unittest discover -s tests -p "test_*.py" -v' not in readme:
+        fail(errors, "README test command must disable repository bytecode generation")
     notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
     if "not covered by this repository's MIT License" not in " ".join(
         notices.split()

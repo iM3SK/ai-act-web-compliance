@@ -88,15 +88,17 @@ package checks:
 
 ```bash
 python -m pip install --no-deps -r requirements-dev.txt
-python -m unittest discover -s tests -p "test_*.py" -v
+python -B -m unittest discover -s tests -p "test_*.py" -v
 python tests/validate_repository.py
 pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1
 ```
 
-The 16 positive and mutation tests prove that the validators accept the valid
+The 23 positive and mutation tests prove that the validators accept the valid
 package and reject malformed preflight records, CRLF-authored text, generated
 caches anywhere in the repository, broken links, modified icons, unpinned
-actions, persisted checkout credentials, and a missing CodeQL upload permission.
+actions, persisted checkout credentials, a missing CodeQL upload permission,
+escaped web assets, duplicate icon checksum paths, unresolved preflight
+templates, and invalid or timezone-free preflight timestamps.
 The repository validator also checks package structure, symbolic links, the
 exact validation dependency, English-only maintained text, prompt metadata,
 workflow pinning, local web assets, and icon hashes. The pack validator checks
