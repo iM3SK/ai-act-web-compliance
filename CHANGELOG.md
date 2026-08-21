@@ -11,8 +11,12 @@ Versioning for its public skill contract.
 - Added the Article 50 temporal-scope and guidance-based output-scope checks.
 - Added repository-wide LF and generated-artifact validation on both supported
   CI operating systems.
-- Expanded the suite to 23 tests with runtime timestamp validation, explicit
-  template mode, icon-manifest bijection, and web-asset containment checks.
+- Expanded the suite to 26 tests with runtime timestamp validation, strict
+  template mode, icon-manifest bijection, web-asset containment checks, and a
+  bytecode-free contributor workflow contract.
+- Restored the narrow Article 50(4) criminal-law exceptions for deepfakes and
+  public-interest text, protected them with a legal-content regression test,
+  and identified the audio-at-the-beginning pattern as a Code implementation.
 - Tracked the Article 50 overview update independently from the final
   Guidelines library page and made local test commands bytecode-free.
 - Hardened checkout credentials and Actions permissions, added CodeQL, grouped

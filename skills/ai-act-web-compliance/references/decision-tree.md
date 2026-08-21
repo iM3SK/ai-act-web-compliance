@@ -80,9 +80,15 @@ For image, audio, or video, test all current elements:
 3. in the intended and foreseeable context it could falsely appear authentic
    or truthful to the relevant audience.
 
-If all elements are met, a professional deployer must disclose the artificial
-generation or manipulation at first exposure under Article 50(4) and (5).
-Machine-readable provenance alone is insufficient.
+**Deepfake criminal-law exception:** before requiring disclosure, check whether
+the use is authorised by law to detect, prevent, investigate, or prosecute
+criminal offences. A law-enforcement purpose, customer, or audience is not
+enough: record the exact legal authorisation and its scope.
+
+If all elements are met and that narrow exception does not apply, a
+professional deployer must disclose the artificial generation or manipulation
+at first exposure under Article 50(4) and (5). Machine-readable provenance
+alone is insufficient.
 
 For evidently artistic, creative, satirical, fictional, or analogous work,
 the disclosure remains but may be made appropriately so it does not hamper
@@ -101,13 +107,17 @@ justice, law enforcement, fundamental rights, public security, public health,
 environmental protection, consumer safety, and economic, financial,
 scientific, political, or cultural developments relevant to public debate.
 
-If all criteria apply, disclose AI generation or manipulation unless both are
-true:
+If all criteria apply, disclose AI generation or manipulation unless either:
 
-- there was substantive human review or editorial control by a person with
-  relevant knowledge and professional judgement; and
-- a natural or legal person holds ultimate editorial responsibility for the
-  publication.
+- **Public-interest-text criminal-law exception:** the use is authorised by law
+  to detect, prevent, investigate, or prosecute criminal offences; record the
+  exact legal authorisation and its scope; or
+- both of the following are true:
+
+  - there was substantive human review or editorial control by a person with
+    relevant knowledge and professional judgement; and
+  - a natural or legal person holds ultimate editorial responsibility for the
+    publication.
 
 Spelling, grammar, formatting, or purely procedural checks are not substantive
 review. Record the responsible role and actual process; do not invent an

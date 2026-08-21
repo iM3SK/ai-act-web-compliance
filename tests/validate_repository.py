@@ -188,6 +188,21 @@ def check_skill_metadata(errors: list[str]) -> None:
         fail(errors, "default prompt must explicitly invoke the skill")
 
 
+def check_legal_content_contracts(errors: list[str]) -> None:
+    decision_tree = (
+        SKILL_ROOT / "references" / "decision-tree.md"
+    ).read_text(encoding="utf-8")
+    for required in (
+        "**Deepfake criminal-law exception:**",
+        "**Public-interest-text criminal-law exception:**",
+    ):
+        if required not in decision_tree:
+            fail(
+                errors,
+                f"decision tree is missing legal content contract: {required}",
+            )
+
+
 def check_web_example(errors: list[str]) -> None:
     example = SKILL_ROOT / "assets" / "web" / "examples.html"
     if not example.is_file():
@@ -319,7 +334,7 @@ def check_dependabot(errors: list[str]) -> None:
             fail(errors, f"Dependabot {ecosystem} updates must be grouped")
 
 
-def check_readme_contract(errors: list[str]) -> None:
+def check_documentation_contract(errors: list[str]) -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     headings = [line for line in readme.splitlines() if line.startswith("## ")]
     if not headings or headings[0] != "## Clickable map":
@@ -328,6 +343,15 @@ def check_readme_contract(errors: list[str]) -> None:
         fail(errors, "README.md must state the legal-advice boundary")
     if 'python -B -m unittest discover -s tests -p "test_*.py" -v' not in readme:
         fail(errors, "README test command must disable repository bytecode generation")
+    contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    if (
+        'python -B -m unittest discover -s tests -p "test_*.py" -v'
+        not in contributing
+    ):
+        fail(
+            errors,
+            "CONTRIBUTING test command must disable repository bytecode generation",
+        )
     notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
     if "not covered by this repository's MIT License" not in " ".join(
         notices.split()
@@ -347,11 +371,12 @@ def main() -> None:
     check_generated_artifacts(errors)
     check_markdown_links(errors)
     check_skill_metadata(errors)
+    check_legal_content_contracts(errors)
     check_web_example(errors)
     check_icon_integrity(errors)
     check_workflow(errors)
     check_dependabot(errors)
-    check_readme_contract(errors)
+    check_documentation_contract(errors)
 
     if errors:
         for error in errors:

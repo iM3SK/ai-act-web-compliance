@@ -131,6 +131,18 @@ class PreflightValidatorTests(unittest.TestCase):
         result = run_preflight_validator(TEMPLATE_PREFLIGHT, "--template")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_rejects_modified_template_in_template_mode(self) -> None:
+        modified = TEMPLATE_PREFLIGHT.replace(
+            "jurisdiction: EU/EEA and named Member State",
+            "jurisdiction: EU/EEA only",
+        )
+        result = run_preflight_validator(modified, "--template")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "template mode accepts only the documented placeholder mapping",
+            result.stdout + result.stderr,
+        )
+
 
 Mutator = Callable[[Path], None]
 
@@ -274,6 +286,43 @@ class RepositoryValidatorMutationTests(unittest.TestCase):
             manifest.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
 
         self.assert_mutation_rejected(mutate, "duplicate icon checksum path")
+
+    def test_rejects_bytecode_enabled_contributing_command(self) -> None:
+        def mutate(checkout: Path) -> None:
+            contributing = checkout / "CONTRIBUTING.md"
+            text = contributing.read_text(encoding="utf-8")
+            text = text.replace(
+                'python -B -m unittest discover -s tests -p "test_*.py" -v',
+                'python -m unittest discover -s tests -p "test_*.py" -v',
+            )
+            contributing.write_bytes(text.encode("utf-8"))
+
+        self.assert_mutation_rejected(
+            mutate,
+            "CONTRIBUTING test command must disable repository bytecode generation",
+        )
+
+    def test_rejects_removed_criminal_law_exception(self) -> None:
+        def mutate(checkout: Path) -> None:
+            decision_tree = (
+                checkout
+                / "skills"
+                / "ai-act-web-compliance"
+                / "references"
+                / "decision-tree.md"
+            )
+            text = decision_tree.read_text(encoding="utf-8")
+            text = text.replace(
+                "**Deepfake criminal-law exception:**",
+                "**Deepfake exception:**",
+                1,
+            )
+            decision_tree.write_bytes(text.encode("utf-8"))
+
+        self.assert_mutation_rejected(
+            mutate,
+            "decision tree is missing legal content contract",
+        )
 
 
 if __name__ == "__main__":

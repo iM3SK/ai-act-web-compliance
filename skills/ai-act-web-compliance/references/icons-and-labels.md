@@ -10,6 +10,13 @@ come from the voluntary Code and are commitments for its signatories. For a
 non-signatory they are an official implementation pathway, not automatically
 the only lawful method.
 
+Before choosing an icon, apply the criminal-law exceptions in the decision
+tree. Article 50(4) does not require the deployer disclosure when the use of a
+deepfake or public-interest text is authorised by law to detect, prevent,
+investigate, or prosecute criminal offences. A law-enforcement context alone
+does not establish that exception. Record the exact authorisation; other legal
+or provider-side duties may remain.
+
 ## Choose the semantic variant
 
 | Variant               | Bundled filename prefix | Use under the current Code                                                                                                               |

@@ -109,18 +109,18 @@ def main() -> None:
     if invalid_values:
         fail("values must be non-empty strings: " + ", ".join(invalid_values))
 
-    if not arguments.template:
-        unresolved = sorted(
-            key
-            for key, value in document.items()
-            if TEMPLATE_VALUES.get(key) == value
-        )
-        if unresolved:
-            fail("unresolved template values: " + ", ".join(unresolved))
+    if arguments.template:
+        if document != TEMPLATE_VALUES:
+            fail("template mode accepts only the documented placeholder mapping")
+        return
+
+    unresolved = sorted(
+        key for key, value in document.items() if TEMPLATE_VALUES.get(key) == value
+    )
+    if unresolved:
+        fail("unresolved template values: " + ", ".join(unresolved))
 
     checked_at = document["checked_at"]
-    if arguments.template and checked_at == TEMPLATE_VALUES["checked_at"]:
-        return
     if CHECKED_AT_PATTERN.fullmatch(checked_at) is None:
         fail("checked_at must use YYYY-MM-DDTHH:MM:SS with Z or a numeric offset")
     normalised = (

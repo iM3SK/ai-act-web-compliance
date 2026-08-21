@@ -202,7 +202,9 @@ $contentContracts = @(
             'It does not postpone Article 50(1)',
             'source code and integral code comments or configuration',
             'machine-to-machine',
-            'closed-loop industrial or product-'
+            'closed-loop industrial or product-',
+            '**Deepfake criminal-law exception:**',
+            '**Public-interest-text criminal-law exception:**'
         )
     },
     @{
@@ -223,13 +225,16 @@ $contentContracts = @(
             'official-looking audio mark',
             'Fully AI-generated',
             'Partially AI-modified',
-            'Basic AI'
+            'Basic AI',
+            'A law-enforcement context alone',
+            'does not establish that exception'
         )
     },
     @{
         Path = 'references\web-implementation.md'
         Required = @(
-            'audio master to include the audible',
+            '**CODE implementation:**',
+            'include the audible disclaimer at the beginning',
             'Article 50(1) chatbot',
             'Never absolutely position a custom control',
             'fullscreen the labelled wrapper'

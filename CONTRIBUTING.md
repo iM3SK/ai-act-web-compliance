@@ -23,7 +23,7 @@ preflight and keep the repository directly installable.
 2. Install the pinned test dependency with
    `python -m pip install --no-deps -r requirements-dev.txt`.
 3. Make the smallest coherent change and update tests or content contracts.
-4. Run `python -m unittest discover -s tests -p "test_*.py" -v`.
+4. Run `python -B -m unittest discover -s tests -p "test_*.py" -v`.
 5. Run `python tests/validate_repository.py`.
 6. Run
    `pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1`.
