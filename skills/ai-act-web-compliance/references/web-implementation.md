@@ -32,8 +32,9 @@ original source and licence record with the implementation.
    over the native media control strip. When fullscreen must include a sibling
    disclosure, fullscreen the labelled wrapper and keep its custom toolbar
    outside the native control surface.
-5. For audio-only deepfakes, edit the audio master to include the audible
-   disclaimer. The visible HTML label is an additional cue, not a substitute.
+5. **CODE implementation:** For audio-only deepfakes, edit the audio master to
+   include the audible disclaimer at the beginning. The visible HTML label is
+   an additional cue, not a substitute.
 6. Do not present an EU AI-content icon as the prescribed Article 50(1) chatbot
    notice. A clear text notice can satisfy the interaction disclosure; assess
    its design separately from Article 50(4) content labelling.

@@ -10,8 +10,8 @@ The Commission's current Article 50 FAQ states that national competent market
 surveillance authorities mainly enforce Article 50. The AI Office has the
 limited/exclusive competences defined by the current AI Act for specified AI
 systems, and the European Data Protection Supervisor covers EU institutions.
-Confirm the Slovak designation and procedure during every preflight because
-the national implementing framework can change.
+Confirm the relevant Member State designation and procedure during every
+preflight because national implementing frameworks can change.
 
 ## How a case can start and be checked
 

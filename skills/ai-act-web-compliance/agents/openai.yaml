@@ -1,7 +1,7 @@
 interface:
   display_name: "EU AI Act Web Compliance"
   short_description: "Current AI-content transparency checks for websites"
-  default_prompt: "Use $ai-act-web-compliance to assess this website's AI-content disclosures against current official sources."
+  default_prompt: "Use $ai-act-web-compliance to assess or plan this website's AI interactions and public AI-content disclosures against live official sources."
 
 policy:
   allow_implicit_invocation: true

@@ -12,14 +12,18 @@ generation workflow, or implementation.
    2024/1689. Check Article 3(60), Article 50, Articles 74 to 85, Article 99,
    Article 111, and Article 113 as relevant. Open every amending act listed by
    the consolidation.
-3. Open the Commission's final Article 50 Guidelines page and download or open
+3. Open both the Commission's final Article 50 Guidelines library page and its
+   Article 50 overview, record both visible update dates, and download or open
    the current final Guidelines. Do not use the consultation draft.
 4. Open the Commission Article 50 FAQ, Code of Practice page, current Code, and
    EU icons page. Record their visible update dates and whether the Code has
    been assessed as adequate.
-5. For Slovakia, check current MIRRI material and the official Slov-Lex and
-   National Council sources for the implementing law, designated authorities,
-   penalty procedure, and any national rules relevant to the use case.
+5. For every named Member State, check its official legislation register,
+   government or ministry material, designated-authority material, penalty
+   procedure, and any national rules relevant to the use case. If a process is
+   ended, withdrawn, merged, or says that another process supersedes it, open
+   the named successor and record both process identifiers, statuses, and
+   dates. Never treat the ended file as the current process.
 6. Check any sector-specific primary law triggered by the content. Typical
    examples are consumer protection, political advertising, privacy,
    accessibility, copyright, media, health, or child-safety rules.
@@ -36,9 +40,11 @@ material until reviewed:
 
 - consolidation date, CELEX identifier, or listed amending act;
 - text or application date of the relevant AI Act provisions;
-- publication/update date or status of final Guidelines, FAQ, or Code;
+- publication/update date or status of the final Guidelines library page,
+  Article 50 overview, FAQ, or Code;
 - icon archive link, licence, semantic variants, or placement rules;
-- Slovak implementing-law stage or designated authority;
+- Member State implementing-law process identifier, successor chain, stage, or
+  designated authority;
 - applicable harmonised standard or official technical guidance.
 
 When a difference is found, re-read the affected provisions and update the
@@ -58,22 +64,20 @@ block as YAML before returning and reject malformed or duplicate fields.
 checked_at: YYYY-MM-DDTHH:MM:SS+TZ
 jurisdiction: EU/EEA and named Member State
 ai_act_consolidation: CELEX identifier and consolidation date
-official_guidance: title, status, and update date
+official_guidance: titles, statuses, and update dates
 code_and_icons: title, status, and update date
-national_mirri: exact page, publication or update date, and observed stage
-national_slov_lex: exact search/register or document checked and result
-national_nrsr: exact search/register or document checked and result
+national_sources: exact authority and legislation-register sources, dates, and results
 changes_since_baseline: none observed | concise list
 unavailable_sources: none | concise list
 ```
 
-Do not write `unavailable_sources: none` unless every required national source
-above was queried through a relevant official document, register, or search and
-its relevant result could be meaningfully inspected. An HTTP success status,
-file existence, unrelated document, general web search, another source's
-summary, or silence in one register does not prove the status of the others.
-List an unparseable or relevance-unverified result as unavailable and apply the
-failure behavior below.
+Do not write `unavailable_sources: none` unless every relevant national source
+above was queried through an official authority page, document, register, or
+search and its relevant result could be meaningfully inspected. An HTTP success
+status, file existence, unrelated document, general web search, another
+source's summary, or silence in one register does not prove the status of the
+others. List an unparseable or relevance-unverified result as unavailable and
+apply the failure behavior below.
 
 ## Failure behavior
 

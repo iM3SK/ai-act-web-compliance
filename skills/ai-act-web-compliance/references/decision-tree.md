@@ -3,6 +3,24 @@
 Apply the current live legal text first. Use this tree to organise the facts,
 not to override a later amendment or authoritative interpretation.
 
+## 0. Fix the relevant date
+
+- Article 50 applies from 2 August 2026.
+- Article 111(4) gives only providers of qualifying generative AI systems
+  placed on the market or put into service before 2 August 2026 until
+  2 December 2026 to meet Article 50(2). It does not postpone Article 50(1),
+  (3), (4), or (5).
+- The final Commission Guidelines state that outputs and deepfakes generated or
+  manipulated before 2 August 2026 do not need retroactive marking or
+  labelling. They also state that public-interest text generated or manipulated
+  and published before that date does not need retroactive labelling, while
+  earlier-generated text first published on or after that date must be labelled.
+
+Record generation, manipulation, first-publication, market-placement, and
+putting-into-service dates separately. Treat the last two bullets according to
+their source: the grace period is binding law; the retroactivity explanation is
+the Commission's final guidance.
+
 ## 1. Fix the actor
 
 - **Provider:** develops an AI system, has it developed, and places it on the
@@ -39,6 +57,14 @@ image, video, or text, assess Article 50(2):
   alteration, and legally authorised criminal-law uses;
 - do not mistake a visible website badge for this provider-side technical duty.
 
+The final Commission Guidelines currently treat these outputs as outside the
+Article 50(2) content scope: short sequences of numbers, symbols, or letters;
+source code and integral code comments or configuration; machine-to-machine
+outputs with no human exposure; and closed-loop industrial or product-
+development workflow outputs other than the final synthetic content output.
+Apply these as guidance-based scope interpretations, not as additional words in
+the Regulation, and recheck the current Guidelines before relying on them.
+
 When relying on a third-party model or generator, record what markings and
 detection service the provider actually supplies. Reliance does not prove that
 your own provider duty is fulfilled.
@@ -54,9 +80,15 @@ For image, audio, or video, test all current elements:
 3. in the intended and foreseeable context it could falsely appear authentic
    or truthful to the relevant audience.
 
-If all elements are met, a professional deployer must disclose the artificial
-generation or manipulation at first exposure under Article 50(4) and (5).
-Machine-readable provenance alone is insufficient.
+**Deepfake criminal-law exception:** before requiring disclosure, check whether
+the use is authorised by law to detect, prevent, investigate, or prosecute
+criminal offences. A law-enforcement purpose, customer, or audience is not
+enough: record the exact legal authorisation and its scope.
+
+If all elements are met and that narrow exception does not apply, a
+professional deployer must disclose the artificial generation or manipulation
+at first exposure under Article 50(4) and (5). Machine-readable provenance
+alone is insufficient.
 
 For evidently artistic, creative, satirical, fictional, or analogous work,
 the disclosure remains but may be made appropriately so it does not hamper
@@ -75,13 +107,17 @@ justice, law enforcement, fundamental rights, public security, public health,
 environmental protection, consumer safety, and economic, financial,
 scientific, political, or cultural developments relevant to public debate.
 
-If all criteria apply, disclose AI generation or manipulation unless both are
-true:
+If all criteria apply, disclose AI generation or manipulation unless either:
 
-- there was substantive human review or editorial control by a person with
-  relevant knowledge and professional judgement; and
-- a natural or legal person holds ultimate editorial responsibility for the
-  publication.
+- **Public-interest-text criminal-law exception:** the use is authorised by law
+  to detect, prevent, investigate, or prosecute criminal offences; record the
+  exact legal authorisation and its scope; or
+- both of the following are true:
+
+  - there was substantive human review or editorial control by a person with
+    relevant knowledge and professional judgement; and
+  - a natural or legal person holds ultimate editorial responsibility for the
+    publication.
 
 Spelling, grammar, formatting, or purely procedural checks are not substantive
 review. Record the responsible role and actual process; do not invent an

@@ -1,6 +1,6 @@
 ---
 name: ai-act-web-compliance
-description: Assess and implement current EU AI Act Article 50 transparency for websites and publicly shared AI content. Use for EU or Slovak website checks, AI-content generation and publication workflows, chatbots, deepfakes, public-interest text, official EU icons, machine-readable provenance, detection, enforcement, or penalty questions. Always perform a live official-source preflight before a legal conclusion or compliance action.
+description: Assess and implement current EU AI Act Article 50 transparency for websites and publicly shared AI content. Use for EU/EEA website checks, AI-content generation and publication workflows, chatbots, deepfakes, public-interest text, official EU icons, machine-readable provenance, detection, enforcement, or penalty questions. Always perform a live official-source preflight before a legal conclusion or compliance action.
 ---
 
 # EU AI Act Web Compliance
@@ -67,15 +67,15 @@ Lead with the practical conclusion. For every assessed item provide:
 - exact label text and EU icon variant, or `no icon required`;
 - placement and accessibility requirements;
 - evidence to retain and unresolved facts;
-- separate MIRRI, Slov-Lex, and National Council check results when Slovakia
+- named Member State sources and unresolved national gaps when a Member State
   is in scope;
 - `checked_at` date and nearby links to the controlling official sources.
 
 End every legal or compliance answer with the complete `Preflight record` YAML
 defined in `references/legal-preflight.md`; a prose summary does not replace it.
-Do not return until every required field is present, including separate
-`national_mirri`, `national_slov_lex`, and `national_nrsr` fields when Slovakia
-is in scope. Use an explicit unavailable result rather than omitting a field.
+Do not return until every required field is present, including
+`national_sources` when a Member State is in scope. Use an explicit unavailable
+result rather than omitting a field.
 Before returning, parse the final fenced block as YAML and confirm it contains
 exactly one value for every required top-level field, with no stray delimiter.
 
@@ -113,6 +113,21 @@ the legal timing rule is no later than first interaction or exposure.
   sector-regulated services.
 
 ## Completion gate
+
+Before declaring the work complete, perform an adversarial self-check:
+
+1. Map every material legal claim to the live primary source that directly
+   supports it; a page title, search result, or existing test is insufficient.
+2. Confirm that every promised rule has an actual consumer in the answer,
+   workflow, markup, or validator rather than existing only as documentation.
+3. Test one expected path and one forbidden or failure path for each material
+   implementation or machine-validated contract. A string-presence assertion
+   alone does not prove runtime behaviour.
+4. For web changes, inspect the rendered result and keyboard/accessibility
+   behaviour. For package changes, run the repository and pack validators in
+   addition to focused regression tests.
+5. If any step cannot be evidenced, state the exact unverified scope and do not
+   issue the affected definitive conclusion.
 
 The task is complete only when every in-scope item is classified, every chosen
 label maps to the correct semantic icon, the generation/publication path has

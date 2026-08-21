@@ -14,19 +14,20 @@ preflight and keep the repository directly installable.
   search result, model memory, or a third-party summary.
 - Do not redraw official icons. Preserve the bundled file bytes and update
   checksums and provenance together when the Commission publishes new assets.
-- Keep secrets, personal data, generated caches, and local absolute paths out
-  of commits.
+- Keep secrets, personal data, symbolic links, generated caches, and local
+  absolute paths out of commits.
 
 ## Development
 
 1. Create a focused branch from `main`.
 2. Install the pinned test dependency with
-   `python -m pip install -r requirements-dev.txt`.
+   `python -m pip install --no-deps -r requirements-dev.txt`.
 3. Make the smallest coherent change and update tests or content contracts.
-4. Run `python tests/validate_repository.py`.
-5. Run
+4. Run `python -B -m unittest discover -s tests -p "test_*.py" -v`.
+5. Run `python tests/validate_repository.py`.
+6. Run
    `pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1`.
-6. Review the complete diff and open a pull request that explains the behavior,
+7. Review the complete diff and open a pull request that explains the behavior,
    evidence, verification, and any remaining uncertainty.
 
 ## Legal-source changes
