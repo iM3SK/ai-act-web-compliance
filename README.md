@@ -10,6 +10,12 @@ preflight before every legal conclusion or compliance action. The bundled
 legal baseline is only a change-detection aid, not a substitute for the live
 law.
 
+The public package is intentionally Member State-neutral and contains no
+country-specific legislative baseline. A use involving national law must open
+the relevant Member State's official authority and legislation-register
+sources during that run; country-specific maintained baselines belong in local
+extensions.
+
 ## Clickable map
 
 - AI Act Web Compliance repository - installation, operating guidance, evidence, and project governance.
@@ -20,7 +26,7 @@ law.
     - [Icons and labels](skills/ai-act-web-compliance/references/icons-and-labels.md) - selects semantic and visual icon variants, wording, placement, and accessibility.
     - [Web implementation](skills/ai-act-web-compliance/references/web-implementation.md) - provides reusable HTML and CSS integration guidance.
     - [Enforcement and evidence](skills/ai-act-web-compliance/references/enforcement-and-evidence.md) - explains investigation evidence, detection limits, authorities, and penalty ceilings.
-    - [Official sources](skills/ai-act-web-compliance/references/official-sources.md) - maps the primary EU and Slovak sources that must be checked live.
+    - [Official sources](skills/ai-act-web-compliance/references/official-sources.md) - maps the primary EU sources and the national-source categories that must be checked live.
     - [EU icon provenance](skills/ai-act-web-compliance/assets/eu-icons/SOURCE.md) - records official downloads, archive hashes, filename mapping, and reuse terms.
   - [Contributing](CONTRIBUTING.md) - defines English-only changes, source evidence, tests, and pull-request expectations.
   - [Security policy](SECURITY.md) - explains supported versions and private vulnerability reporting.
@@ -76,19 +82,27 @@ rerun the legal preflight before deployment.
 
 ## Verification
 
-Python 3.8 or newer and PowerShell are required for the complete local check.
-Install the pinned test dependency, then run both validators:
+Python 3.12 and PowerShell are the verified runtime for the complete local check.
+Install the pinned test dependency, then run the validator test suite and both
+package checks:
 
 ```bash
-python -m pip install -r requirements-dev.txt
+python -m pip install --no-deps -r requirements-dev.txt
+python -m unittest discover -s tests -p "test_*.py" -v
 python tests/validate_repository.py
 pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1
 ```
 
-The repository validator checks package structure, English-only maintained
-text, relative links, prompt metadata, workflow pinning, local web assets, and
-icon hashes. The pack validator checks the legal guardrails and preflight YAML
-schema. GitHub Actions runs the same checks on Ubuntu 24.04 and Windows 2025.
+The 16 positive and mutation tests prove that the validators accept the valid
+package and reject malformed preflight records, CRLF-authored text, generated
+caches anywhere in the repository, broken links, modified icons, unpinned
+actions, persisted checkout credentials, and a missing CodeQL upload permission.
+The repository validator also checks package structure, symbolic links, the
+exact validation dependency, English-only maintained text, prompt metadata,
+workflow pinning, local web assets, and icon hashes. The pack validator checks
+the legal guardrails, current source baseline, and preflight YAML schema.
+GitHub Actions runs the same validation on Ubuntu 24.04 and Windows 2025 and a
+separate least-privilege CodeQL Python job on Ubuntu 24.04.
 
 ## Legal boundary
 

@@ -18,9 +18,7 @@ EXPECTED_KEYS = {
     "ai_act_consolidation",
     "official_guidance",
     "code_and_icons",
-    "national_mirri",
-    "national_slov_lex",
-    "national_nrsr",
+    "national_sources",
     "changes_since_baseline",
     "unavailable_sources",
 }

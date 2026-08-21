@@ -13,8 +13,9 @@ change detector, not a substitute for opening the current official source.
    organisations that rely on or sign it.
 4. **Official technical material:** EU icon page and archives, Commission
    technical studies, current standards/specifications from their owner.
-5. **National implementation:** current MIRRI, Slov-Lex, National Council, and
-   designated-authority material for Slovakia.
+5. **National implementation:** current official legislation registers,
+   government or ministry material, and designated-authority material for each
+   named Member State.
 
 ## Canonical live sources
 
@@ -22,9 +23,11 @@ change detector, not a substitute for opening the current official source.
 - [Current consolidation query on EUR-Lex](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02024R1689-20260727)
 - [Digital Omnibus on AI, Regulation (EU) 2026/1744](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32026R1744)
 - [Final Article 50 Guidelines page](https://digital-strategy.ec.europa.eu/en/library/guidelines-transparency-obligations-providers-and-deployers-ai-systems)
+- [Final Article 50 Guidelines PDF](https://ec.europa.eu/newsroom/dae/redirection/document/131215)
 - [Article 50 overview](https://digital-strategy.ec.europa.eu/en/policies/guidelines-ai-transparency-obligations)
 - [Commission Article 50 FAQ](https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act)
 - [Code of Practice](https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content)
+- [Final Code of Practice PDF](https://ec.europa.eu/newsroom/dae/redirection/document/129555)
 - [EU icons and use rules](https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content)
 - [Market-surveillance authorities](https://digital-strategy.ec.europa.eu/en/policies/market-surveillance-authorities-under-ai-act)
 - [AI Act enforcement framework](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
@@ -37,31 +40,38 @@ change detector, not a substitute for opening the current official source.
 - [Audio marking/detection study](https://op.europa.eu/en/publication-detail/-/publication/4f7b8585-4829-11f1-8095-01aa75ed71a1/language-en)
 - [C2PA specification owner](https://spec.c2pa.org/)
 - [Unfair Commercial Practices Directive](https://eur-lex.europa.eu/eli/dir/2005/29/oj)
-- [MIRRI AI Act page](https://mirri.gov.sk/sekcie/informatizacia/jednotny-digitalny-trh/akt-o-umelej-inteligencii-aia/)
-- [MIRRI national-law status, 13 August 2026](https://mirri.gov.sk/aktuality/ministerstvo/slovensko-je-o-krok-blizsie-k-jasnym-pravidlam-pre-umelu-inteligenciu-zakon-o-ai-smeruje-do-dalsej-fazy/)
-- [Slov-Lex](https://www.slov-lex.sk/)
-- [National Council of the Slovak Republic](https://www.nrsr.sk/)
 
 The consolidation URL contains a dated CELEX identifier. During every preflight,
 discover and use the newest consolidation rather than assuming that this dated
 URL is still current.
 
-## Baseline observed on 20 August 2026
+## Baseline observed on 21 August 2026
 
-| Field                  | Observation on that date                                                                                                                     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| AI Act consolidation   | CELEX `02024R1689-20260727`, including Regulation (EU) 2026/1744                                                                             |
-| Article 50 application | 2 August 2026; Article 111(4) gives qualifying systems placed on the market before that date until 2 December 2026 for Article 50(2)         |
-| Final Guidelines       | Published 20 July 2026; page last updated 31 July 2026                                                                                       |
-| Commission FAQ         | Last updated 24 July 2026                                                                                                                    |
-| Code page              | Last updated 31 July 2026; Code assessed as an adequate voluntary tool, not conclusive proof of compliance                                   |
-| EU icons page          | Last updated 10 August 2026; three semantic icons, four visual variants, optional use, free without attribution                              |
-| Slovak framework       | MIRRI stated on 13 August 2026 that the draft national AI law was moving to the Legislative Council and then the Economic and Social Council |
-| C2PA                   | Specification site exposed version 2.4 during the check                                                                                      |
+| Field                  | Observation on that date                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| AI Act consolidation   | CELEX `02024R1689-20260727`, including Regulation (EU) 2026/1744                                                                     |
+| Article 50 application | 2 August 2026; Article 111(4) gives qualifying systems placed on the market before that date until 2 December 2026 for Article 50(2) |
+| Final Guidelines       | Published 20 July 2026; page last updated 31 July 2026                                                                               |
+| Commission FAQ         | Last updated 24 July 2026                                                                                                            |
+| Code page              | Last updated 31 July 2026; Code assessed as an adequate voluntary tool, not conclusive proof of compliance                           |
+| EU icons page          | Last updated 10 August 2026; three semantic icons, four visual variants, optional use, free without attribution                      |
+| C2PA                   | Specification site exposed version 2.4 during the check                                                                              |
+
+## Current official document baseline
+
+Downloaded from the Commission redirects on 21 August 2026. These PDFs are not
+bundled; their identifiers and hashes are change detectors for the next live
+preflight.
+
+| Document                    | Official document ID | SHA-256                                                            |
+| --------------------------- | -------------------- | ------------------------------------------------------------------ |
+| Final Article 50 Guidelines | `131215`             | `30861FC5DE31205846F023068069C92FABC7271EBEAC6AF7BEF68B97F0A33F66` |
+| Final Code of Practice      | `129555`             | `7BD22C5A3C56EAEFDA27A5BF7A6118198EF2A9C9255241BD97ABF7CDEDF9BC28` |
 
 ## Bundled official archive baseline
 
-Downloaded from the Commission redirects on 20 August 2026:
+Downloaded from the Commission redirects on 20 August 2026 and rechecked on
+21 August 2026:
 
 | Archive   | Official document ID | SHA-256                                                            |
 | --------- | -------------------- | ------------------------------------------------------------------ |

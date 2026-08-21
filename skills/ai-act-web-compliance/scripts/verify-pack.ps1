@@ -31,6 +31,32 @@ foreach ($relativePath in $requiredFiles) {
     }
 }
 
+$generatedArtifacts = Get-ChildItem -LiteralPath $skillRoot -Recurse -Force |
+    Where-Object {
+        $_.Name -in '__pycache__', '.pytest_cache', '.DS_Store', 'Thumbs.db' -or
+        $_.Extension -in '.pyc', '.pyo'
+    }
+foreach ($artifact in $generatedArtifacts) {
+    $relativeArtifact = $artifact.FullName.Substring($skillRoot.Length).TrimStart(
+        [char[]]'\/'
+    )
+    $errors.Add("Forbidden generated artifact: $relativeArtifact")
+}
+
+$authoredTextExtensions = '.css', '.html', '.md', '.ps1', '.py', '.txt',
+    '.yaml', '.yml'
+$authoredTextFiles = Get-ChildItem -LiteralPath $skillRoot -Recurse -File |
+    Where-Object { $_.Extension -in $authoredTextExtensions }
+foreach ($textFile in $authoredTextFiles) {
+    $bytes = [System.IO.File]::ReadAllBytes($textFile.FullName)
+    if ($bytes -contains 13) {
+        $relativeText = $textFile.FullName.Substring($skillRoot.Length).TrimStart(
+            [char[]]'\/'
+        )
+        $errors.Add("Authored text must use LF line endings: $relativeText")
+    }
+}
+
 if (-not (Test-Path -LiteralPath $checksumFile -PathType Leaf)) {
     $errors.Add('Missing icon checksum manifest.')
 }
@@ -86,6 +112,9 @@ $requiredSkillText = @(
     'with no stray delimiter',
     'Never headline or summarize an assessment as `PASS`, `compliant`',
     'State the narrower Article 50 classification'
+    'perform an adversarial self-check'
+    'Test one expected path and one forbidden or failure path'
+    'A string-presence assertion'
 )
 foreach ($requiredText in $requiredSkillText) {
     if (-not $skillText.Contains($requiredText)) {
@@ -99,12 +128,23 @@ $contentContracts = @(
         Required = @(
             'This is a fail-closed gate',
             'checked_at: YYYY-MM-DDTHH:MM:SS+TZ',
-            'national_mirri:',
-            'national_slov_lex:',
-            'national_nrsr:',
-            'HTTP success status',
+            'national_sources:',
+            'the named successor and record both process identifiers',
+            'An HTTP success',
             'map the gap to the conclusions it could change',
             'do not use it to block an independently supported'
+        )
+    },
+    @{
+        Path = 'references\decision-tree.md'
+        Required = @(
+            '## 0. Fix the relevant date',
+            '2 December 2026',
+            'do not need retroactive marking or',
+            'It does not postpone Article 50(1)',
+            'source code and integral code comments or configuration',
+            'machine-to-machine',
+            'closed-loop industrial or product-'
         )
     },
     @{
@@ -143,6 +183,17 @@ $contentContracts = @(
             'Authorities do not need a universal `AI detector`',
             'EUR 15 million',
             'EUR 7.5 million'
+        )
+    },
+    @{
+        Path = 'references\official-sources.md'
+        Required = @(
+            'Baseline observed on 21 August 2026',
+            'Official document ID',
+            '`131215`',
+            '`129555`',
+            '30861FC5DE31205846F023068069C92FABC7271EBEAC6AF7BEF68B97F0A33F66',
+            '7BD22C5A3C56EAEFDA27A5BF7A6118198EF2A9C9255241BD97ABF7CDEDF9BC28'
         )
     }
 )

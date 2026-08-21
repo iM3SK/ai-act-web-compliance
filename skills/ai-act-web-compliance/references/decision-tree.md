@@ -3,6 +3,24 @@
 Apply the current live legal text first. Use this tree to organise the facts,
 not to override a later amendment or authoritative interpretation.
 
+## 0. Fix the relevant date
+
+- Article 50 applies from 2 August 2026.
+- Article 111(4) gives only providers of qualifying generative AI systems
+  placed on the market or put into service before 2 August 2026 until
+  2 December 2026 to meet Article 50(2). It does not postpone Article 50(1),
+  (3), (4), or (5).
+- The final Commission Guidelines state that outputs and deepfakes generated or
+  manipulated before 2 August 2026 do not need retroactive marking or
+  labelling. They also state that public-interest text generated or manipulated
+  and published before that date does not need retroactive labelling, while
+  earlier-generated text first published on or after that date must be labelled.
+
+Record generation, manipulation, first-publication, market-placement, and
+putting-into-service dates separately. Treat the last two bullets according to
+their source: the grace period is binding law; the retroactivity explanation is
+the Commission's final guidance.
+
 ## 1. Fix the actor
 
 - **Provider:** develops an AI system, has it developed, and places it on the
@@ -38,6 +56,14 @@ image, video, or text, assess Article 50(2):
 - check the current exceptions for assistive standard editing, no substantial
   alteration, and legally authorised criminal-law uses;
 - do not mistake a visible website badge for this provider-side technical duty.
+
+The final Commission Guidelines currently treat these outputs as outside the
+Article 50(2) content scope: short sequences of numbers, symbols, or letters;
+source code and integral code comments or configuration; machine-to-machine
+outputs with no human exposure; and closed-loop industrial or product-
+development workflow outputs other than the final synthetic content output.
+Apply these as guidance-based scope interpretations, not as additional words in
+the Regulation, and recheck the current Guidelines before relying on them.
 
 When relying on a third-party model or generator, record what markings and
 detection service the provider actually supplies. Reliance does not prove that

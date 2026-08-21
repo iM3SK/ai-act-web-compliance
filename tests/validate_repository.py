@@ -31,6 +31,8 @@ REQUIRED_PATHS = {
     ROOT / "SECURITY.md",
     ROOT / "CHANGELOG.md",
     ROOT / ".github" / "workflows" / "ci.yml",
+    ROOT / ".github" / "dependabot.yml",
+    ROOT / ".github" / "CODEOWNERS",
     SKILL_ROOT / "SKILL.md",
     SKILL_ROOT / "agents" / "openai.yaml",
     SKILL_ROOT / "scripts" / "verify-pack.ps1",
@@ -69,6 +71,7 @@ def text_files() -> list[Path]:
         if path.suffix.lower() in TEXT_SUFFIXES or path.name in {
             ".gitattributes",
             ".gitignore",
+            "CODEOWNERS",
             "LICENSE",
         }:
             files.append(path)
@@ -81,6 +84,18 @@ def check_required_paths(errors: list[str]) -> None:
             fail(errors, f"missing required file: {path.relative_to(ROOT)}")
 
 
+def check_repository_entries(errors: list[str]) -> None:
+    for path in ROOT.rglob("*"):
+        if ".git" in path.parts:
+            continue
+        if path.is_symlink():
+            fail(errors, f"symbolic links are not allowed: {path.relative_to(ROOT)}")
+
+    requirements = (ROOT / "requirements-dev.txt").read_text(encoding="utf-8")
+    if requirements.splitlines() != ["PyYAML==6.0.3"]:
+        fail(errors, "requirements-dev.txt must contain only pinned PyYAML 6.0.3")
+
+
 def check_safe_english_text(errors: list[str]) -> None:
     windows_user_path = re.compile(r"(?i)[a-z]:" + r"[\\/]" + "users" + r"[\\/]")
     posix_home_path = re.compile("/" + "home" + r"/[^/]+/")
@@ -89,6 +104,8 @@ def check_safe_english_text(errors: list[str]) -> None:
         raw = path.read_bytes()
         if raw.startswith((b"\xef\xbb\xbf", b"\xff\xfe", b"\xfe\xff")):
             fail(errors, f"byte-order mark is not allowed: {relative}")
+        if b"\r" in raw:
+            fail(errors, f"authored text must use LF line endings: {relative}")
         try:
             text = raw.decode("utf-8")
         except UnicodeDecodeError as error:
@@ -100,6 +117,19 @@ def check_safe_english_text(errors: list[str]) -> None:
             fail(errors, f"non-ASCII maintained text in {relative}: {rendered}")
         if windows_user_path.search(text) or posix_home_path.search(text):
             fail(errors, f"local absolute path in {relative}")
+
+
+def check_generated_artifacts(errors: list[str]) -> None:
+    forbidden_names = {"__pycache__", ".pytest_cache", ".DS_Store", "Thumbs.db"}
+    forbidden_suffixes = {".pyc", ".pyo"}
+    for path in ROOT.rglob("*"):
+        relative = path.relative_to(ROOT)
+        if ".git" in relative.parts:
+            continue
+        if any(part in forbidden_names for part in relative.parts):
+            fail(errors, f"forbidden generated artifact: {path.relative_to(ROOT)}")
+        elif path.is_file() and path.suffix.lower() in forbidden_suffixes:
+            fail(errors, f"forbidden generated artifact: {path.relative_to(ROOT)}")
 
 
 def check_markdown_links(errors: list[str]) -> None:
@@ -210,6 +240,53 @@ def check_workflow(errors: list[str]) -> None:
         fail(errors, "CI workflow must declare read-only contents permission")
     if "cache-dependency-path: requirements-dev.txt" not in workflow:
         fail(errors, "setup-python cache must track requirements-dev.txt")
+    if workflow.count(
+        "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    ) != 2:
+        fail(errors, "CI must use the verified actions/checkout v7.0.1 commit")
+    if "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97" not in workflow:
+        fail(errors, "CI must use the verified actions/setup-python v7.0.0 commit")
+    checkout_count = workflow.count("uses: actions/checkout@")
+    if workflow.count("persist-credentials: false") != checkout_count:
+        fail(errors, "every checkout step must disable persisted credentials")
+    if "concurrency:\n" not in workflow or "cancel-in-progress: true" not in workflow:
+        fail(errors, "CI workflow must cancel superseded runs")
+    if "PIP_NO_INPUT: \"1\"" not in workflow:
+        fail(errors, "CI dependency installation must be non-interactive")
+    if "python -m pip install --no-deps -r requirements-dev.txt" not in workflow:
+        fail(errors, "CI must install the pinned validation dependency without dependencies")
+    if workflow.count("github/codeql-action/") != 2:
+        fail(errors, "CI must initialise and analyse Python with CodeQL")
+    if "security-events: write" not in workflow:
+        fail(errors, "CodeQL job must have security-events write permission")
+
+
+def check_dependabot(errors: list[str]) -> None:
+    path = ROOT / ".github" / "dependabot.yml"
+    document = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(document, dict) or document.get("version") != 2:
+        fail(errors, "Dependabot configuration must use version 2")
+        return
+    updates = document.get("updates")
+    if not isinstance(updates, list):
+        fail(errors, "Dependabot configuration must contain updates")
+        return
+    ecosystems = {
+        update.get("package-ecosystem"): update
+        for update in updates
+        if isinstance(update, dict)
+    }
+    if set(ecosystems) != {"pip", "github-actions"}:
+        fail(errors, "Dependabot must cover pip and github-actions")
+        return
+    for ecosystem, update in ecosystems.items():
+        schedule = update.get("schedule")
+        if not isinstance(schedule, dict) or schedule.get("interval") != "weekly":
+            fail(errors, f"Dependabot {ecosystem} updates must run weekly")
+        if update.get("open-pull-requests-limit") != 5:
+            fail(errors, f"Dependabot {ecosystem} must cap open pull requests at 5")
+        if not isinstance(update.get("groups"), dict):
+            fail(errors, f"Dependabot {ecosystem} updates must be grouped")
 
 
 def check_readme_contract(errors: list[str]) -> None:
@@ -225,16 +302,23 @@ def check_readme_contract(errors: list[str]) -> None:
     ):
         fail(errors, "third-party icon license boundary is missing")
 
+    codeowners = (ROOT / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
+    if codeowners.strip() != "* @iM3SK":
+        fail(errors, "CODEOWNERS must assign all repository paths to @iM3SK")
+
 
 def main() -> None:
     errors: list[str] = []
     check_required_paths(errors)
+    check_repository_entries(errors)
     check_safe_english_text(errors)
+    check_generated_artifacts(errors)
     check_markdown_links(errors)
     check_skill_metadata(errors)
     check_web_example(errors)
     check_icon_integrity(errors)
     check_workflow(errors)
+    check_dependabot(errors)
     check_readme_contract(errors)
 
     if errors:
@@ -243,8 +327,9 @@ def main() -> None:
         raise SystemExit(1)
 
     print(
-        "PASS: repository structure, English-only text, links, metadata, "
-        "workflow, web assets, and 24 EU icon checksums are valid."
+        "PASS: repository structure, LF English-only text, generated-artifact "
+        "exclusion, links, metadata, workflow, web assets, and 24 EU icon "
+        "checksums are valid."
     )
 
 
