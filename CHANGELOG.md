@@ -3,6 +3,17 @@
 All notable release changes are recorded here. The project follows Semantic
 Versioning for its public skill contract.
 
+## 1.0.3 - 2026-10-10
+
+### Fixed
+
+- Replaced the PowerShell package checker with a small launcher and a standalone
+  Python implementation after Bitdefender quarantined the original validator.
+  Preserved icon integrity, file and path checks, legal content guardrails, and
+  the preflight YAML schema without antivirus exclusions.
+- Shared preflight schema validation between both command-line validators and
+  added installed-package mutation tests for the package checker and launcher.
+
 ## 1.0.2 - 2026-08-21
 
 - Kept the public package Member State-neutral; country-specific legal source

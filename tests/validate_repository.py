@@ -39,6 +39,8 @@ REQUIRED_PATHS = {
     SKILL_ROOT / "assets" / "web" / "ai-disclosure.css",
     SKILL_ROOT / "assets" / "web" / "examples.html",
     SKILL_ROOT / "scripts" / "verify-pack.ps1",
+    SKILL_ROOT / "scripts" / "verify-pack.py",
+    SKILL_ROOT / "scripts" / "validation_core.py",
     SKILL_ROOT / "scripts" / "verify-preflight-yaml.py",
 }
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
