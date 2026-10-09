@@ -35,4 +35,4 @@ Recheck the live page before each compliance use.
 | `white-50`        | `white transparent`     |
 
 The files in `SHA256SUMS.txt` allow byte-integrity verification after the
-rename. Run `scripts/verify-pack.ps1` from the skill root.
+rename. Run `scripts/verify-package.ps1` from the skill root.

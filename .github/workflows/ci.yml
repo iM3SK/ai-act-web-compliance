@@ -53,7 +53,7 @@ jobs:
 
       - name: Validate skill package
         shell: pwsh
-        run: ./skills/ai-act-web-compliance/scripts/verify-pack.ps1
+        run: ./skills/ai-act-web-compliance/scripts/verify-package.ps1
 
   codeql:
     name: CodeQL

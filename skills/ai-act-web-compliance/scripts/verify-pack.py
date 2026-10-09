@@ -29,7 +29,7 @@ REQUIRED_FILES = (
     "assets/web/ai-disclosure.css",
     "assets/web/examples.html",
     "scripts/validation_core.py",
-    "scripts/verify-pack.ps1",
+    "scripts/verify-package.ps1",
     "scripts/verify-preflight-yaml.py",
 )
 GENERATED_NAMES = {"__pycache__", ".pytest_cache", ".ds_store", "thumbs.db"}

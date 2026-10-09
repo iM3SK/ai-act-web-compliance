@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 import os
 from pathlib import Path
+import shlex
 import shutil
 import subprocess
 import sys
@@ -15,7 +16,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 INSTALLED_PACK = ROOT / "skills" / "ai-act-web-compliance"
 PYTHON_VALIDATOR = Path("scripts") / "verify-pack.py"
-POWERSHELL_LAUNCHER = Path("scripts") / "verify-pack.ps1"
+POWERSHELL_LAUNCHER = Path("scripts") / "verify-package.ps1"
 PWSH = shutil.which("pwsh")
 
 Mutator = Callable[[Path], None]
@@ -39,7 +40,11 @@ def run_python_validator(pack: Path) -> subprocess.CompletedProcess[str]:
     )
 
 
-def run_powershell_launcher(pack: Path) -> subprocess.CompletedProcess[str]:
+def run_powershell_launcher(
+    pack: Path,
+    *,
+    environment: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess[str]:
     if PWSH is None:
         raise unittest.SkipTest("pwsh is not installed")
     return subprocess.run(
@@ -51,10 +56,41 @@ def run_powershell_launcher(pack: Path) -> subprocess.CompletedProcess[str]:
             str(pack / POWERSHELL_LAUNCHER),
         ],
         cwd=pack,
+        env=environment,
         text=True,
         capture_output=True,
         check=False,
     )
+
+
+def write_python_shim(
+    directory: Path,
+    *,
+    executable: str | None = None,
+    failure_marker: str = "",
+    exit_code: int = 0,
+) -> None:
+    """Create a native command shim that PowerShell can discover as python."""
+    directory.mkdir()
+    if os.name == "nt":
+        shim = directory / "python.cmd"
+        if executable is not None:
+            command = f"{subprocess.list2cmdline([executable])} %*"
+        else:
+            command = f"echo {failure_marker} 1>&2\r\nexit /b {exit_code}"
+        shim.write_bytes(f"@echo off\r\n{command}\r\n".encode("utf-8"))
+        return
+
+    shim = directory / "python"
+    if executable is not None:
+        command = f'exec {shlex.quote(executable)} "$@"'
+    else:
+        command = (
+            f"printf '%s\\n' {shlex.quote(failure_marker)} >&2\n"
+            f"exit {exit_code}"
+        )
+    shim.write_text(f"#!/bin/sh\n{command}\n", encoding="utf-8", newline="\n")
+    shim.chmod(0o755)
 
 
 def run_installed_pack(
@@ -145,6 +181,65 @@ class PackValidatorTests(unittest.TestCase):
         result = run_installed_pack(powershell=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("PASS:", result.stdout + result.stderr)
+
+    @unittest.skipUnless(PWSH is not None, "pwsh is not installed")
+    def test_pack_018_powershell_launcher_uses_first_python_match(self) -> None:
+        """PACK-018: multiple Python applications select the first PATH match."""
+        with tempfile.TemporaryDirectory(prefix="ai-act-pack-") as temporary:
+            outer = Path(temporary)
+            pack = outer / "installed skill"
+            first_bin = outer / "first python"
+            second_bin = outer / "second python"
+            shutil.copytree(INSTALLED_PACK, pack)
+            write_python_shim(first_bin, executable=sys.executable)
+            write_python_shim(
+                second_bin,
+                failure_marker="SECOND_PYTHON_SHIM_INVOKED",
+                exit_code=91,
+            )
+            environment = os.environ.copy()
+            environment["PATH"] = os.pathsep.join(
+                [str(first_bin), str(second_bin), environment.get("PATH", "")]
+            )
+
+            result = run_powershell_launcher(pack, environment=environment)
+
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 0, output)
+        self.assertIn("PASS:", output)
+        self.assertNotIn("SECOND_PYTHON_SHIM_INVOKED", output)
+
+    @unittest.skipUnless(PWSH is not None, "pwsh is not installed")
+    def test_pack_019_powershell_launcher_rejects_missing_validator(self) -> None:
+        """PACK-019: a missing Python validator returns the documented failure."""
+        with tempfile.TemporaryDirectory(prefix="ai-act-pack-") as temporary:
+            pack = Path(temporary) / "installed skill"
+            shutil.copytree(INSTALLED_PACK, pack)
+            (pack / PYTHON_VALIDATOR).unlink()
+
+            result = run_powershell_launcher(pack)
+
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 1, output)
+        self.assertIn("Missing package validator", output)
+
+    @unittest.skipUnless(PWSH is not None, "pwsh is not installed")
+    def test_pack_020_powershell_launcher_rejects_missing_python(self) -> None:
+        """PACK-020: a PATH without Python returns the documented failure."""
+        with tempfile.TemporaryDirectory(prefix="ai-act-pack-") as temporary:
+            outer = Path(temporary)
+            pack = outer / "installed skill"
+            empty_bin = outer / "empty bin"
+            empty_bin.mkdir()
+            shutil.copytree(INSTALLED_PACK, pack)
+            environment = os.environ.copy()
+            environment["PATH"] = str(empty_bin)
+
+            result = run_powershell_launcher(pack, environment=environment)
+
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 1, output)
+        self.assertIn("Python with PyYAML is required", output)
 
     def test_pack_003_rejects_missing_required_file(self) -> None:
         """PACK-003: a required installed-pack file may not be omitted."""

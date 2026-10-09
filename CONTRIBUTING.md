@@ -26,7 +26,7 @@ preflight and keep the repository directly installable.
 4. Run `python -B -m unittest discover -s tests -p "test_*.py" -v`.
 5. Run `python tests/validate_repository.py`.
 6. Run
-   `pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1`.
+   `pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-package.ps1`.
 7. Review the complete diff and open a pull request that explains the behavior,
    evidence, verification, and any remaining uncertainty.
 
