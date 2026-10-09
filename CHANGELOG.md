@@ -1,7 +1,26 @@
 # Changelog
 
+<!-- markdownlint-configure-file {"MD024": {"siblings_only": true}} -->
+
 All notable release changes are recorded here. The project follows Semantic
 Versioning for its public skill contract.
+
+## 2.0.0 - 2026-10-10
+
+### Changed
+
+- **Breaking:** renamed the PowerShell package-validation entrypoint from
+  `scripts/verify-pack.ps1` to `scripts/verify-package.ps1`. Update existing <!-- markdown-check: nonbinding-resource -->
+  commands to use the new path. The standalone Python entrypoint and all
+  package-validation rules are unchanged.
+
+### Fixed
+
+- Restored local package validation where Windows refused to recreate the
+  original quarantined script path, using a new transparent PowerShell launcher
+  without antivirus exclusions or changes to protection settings.
+- Select the first native Python executable when multiple installations are
+  present, and preserve validation failures as nonzero process exit codes.
 
 ## 1.0.3 - 2026-10-10
 
