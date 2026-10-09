@@ -1,5 +1,9 @@
 # AI Act Web Compliance
 
+[![Release](https://img.shields.io/github/v/release/iM3SK/ai-act-web-compliance)](https://github.com/iM3SK/ai-act-web-compliance/releases/latest)
+[![CI](https://github.com/iM3SK/ai-act-web-compliance/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/iM3SK/ai-act-web-compliance/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/iM3SK/ai-act-web-compliance)](LICENSE)
+
 An installable Codex skill for assessing and implementing EU AI Act Article 50
 transparency on websites and in public AI-content workflows. It covers live
 official-source checks, decision paths, labels, official EU icons, accessible
