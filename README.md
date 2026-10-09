@@ -93,7 +93,16 @@ python tests/validate_repository.py
 pwsh -NoProfile -File skills/ai-act-web-compliance/scripts/verify-pack.ps1
 ```
 
-The 26 positive and mutation tests prove that the validators accept the valid
+The PowerShell entry point is a small launcher for the standalone Python package
+validator. Both entry points use the same read-only checks and exit status; the
+installed skill does not depend on this repository's test directory. To validate
+an installed package without PowerShell, run:
+
+```bash
+python -B skills/ai-act-web-compliance/scripts/verify-pack.py
+```
+
+The 43 positive and mutation tests prove that the validators accept the valid
 package and reject malformed preflight records, CRLF-authored text, generated
 caches anywhere in the repository, broken links, modified icons, unpinned
 actions, persisted checkout credentials, a missing CodeQL upload permission,
@@ -102,6 +111,9 @@ templates, altered documentation templates, invalid or timezone-free preflight
 timestamps, and contributor instructions that would generate repository
 bytecode. A legal-content regression test also preserves both narrow Article
 50(4) criminal-law exceptions in the decision tree.
+Installed-package tests exercise both entry points from a path with spaces,
+verify failure exit propagation, and ensure the Python entry points create no
+bytecode caches even without interpreter flags.
 The repository validator also checks package structure, symbolic links, the
 exact validation dependency, English-only maintained text, prompt metadata,
 workflow pinning, local web assets, and icon hashes. The pack validator checks
