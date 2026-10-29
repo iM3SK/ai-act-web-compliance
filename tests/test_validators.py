@@ -234,6 +234,20 @@ class RepositoryValidatorMutationTests(unittest.TestCase):
 
         self.assert_mutation_rejected(mutate, "not pinned to a commit")
 
+    def test_rejects_outdated_setup_python_commit(self) -> None:
+        def mutate(checkout: Path) -> None:
+            workflow = checkout / ".github" / "workflows" / "ci.yml"
+            text = workflow.read_text(encoding="utf-8")
+            text = text.replace(
+                "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+                "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+            )
+            workflow.write_bytes(text.encode("utf-8"))
+
+        self.assert_mutation_rejected(
+            mutate, "CI must use the verified actions/setup-python v7.1.0 commit"
+        )
+
     def test_rejects_persisted_checkout_credentials(self) -> None:
         def mutate(checkout: Path) -> None:
             workflow = checkout / ".github" / "workflows" / "ci.yml"
