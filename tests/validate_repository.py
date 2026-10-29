@@ -289,8 +289,8 @@ def check_workflow(errors: list[str]) -> None:
         "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
     ) != 2:
         fail(errors, "CI must use the verified actions/checkout v7.0.1 commit")
-    if "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97" not in workflow:
-        fail(errors, "CI must use the verified actions/setup-python v7.0.0 commit")
+    if "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0" not in workflow:
+        fail(errors, "CI must use the verified actions/setup-python v7.1.0 commit")
     checkout_count = workflow.count("uses: actions/checkout@")
     if workflow.count("persist-credentials: false") != checkout_count:
         fail(errors, "every checkout step must disable persisted credentials")
